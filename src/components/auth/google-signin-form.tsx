@@ -17,7 +17,20 @@ import {
   Loader2
 } from "lucide-react"
 import { toast } from "sonner"
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
+// TODO: Replace with your project's actual configuration object
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+const app = initializeApp(firebaseConfig);
 interface GoogleSignInFormProps {
   onSignIn: () => void
 }
@@ -48,14 +61,23 @@ export default function GoogleSignInForm({ onSignIn }: GoogleSignInFormProps) {
   }
 
   const handleGoogleSignIn = async () => {
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
     setGoogleLoading(true)
     
-    // Simulate Google OAuth
-    setTimeout(() => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      // The signed-in user info.
+      const user = result.user;
+      console.log("Google sign-in successful:", user);
       toast.success("Welcome! Signed in with Google")
       onSignIn()
+    } catch (error: any) {
+      console.error("Google sign-in error:", error);
+      toast.error(`Google sign-in failed: ${error.message}`)
+    } finally {
       setGoogleLoading(false)
-    }, 2000)
+    }
   }
 
   return (

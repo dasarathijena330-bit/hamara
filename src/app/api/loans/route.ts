@@ -40,8 +40,6 @@ export async function GET(request: NextRequest) {
     const sort = searchParams.get('sort') || 'createdAt';
     const order = searchParams.get('order') || 'desc';
 
-    let query = db.select().from(loans);
-
     // Build where conditions
     const conditions = [];
     
@@ -53,12 +51,14 @@ export async function GET(request: NextRequest) {
       conditions.push(eq(loans.status, status));
     }
 
+    let query = db.select().from(loans);
+
     if (conditions.length > 0) {
       query = query.where(and(...conditions));
     }
 
     // Add sorting
-    if (sort === 'amount') {
+    if (sort === 'amount' && (order === 'asc' || order === 'desc')) {
       query = order === 'asc' 
         ? query.orderBy(asc(loans.amount))
         : query.orderBy(desc(loans.amount));
