@@ -1,0 +1,165 @@
+import { db } from '@/db';
+import { loans } from '@/db/schema';
+
+async function main() {
+    const sampleLoans = [
+        {
+            borrowerName: 'Rajesh Sharma',
+            amount: 15000.00,
+            interestRate: 7.2,
+            startDate: '2023-11-01',
+            notes: 'Home renovation',
+            status: 'active',
+            createdAt: new Date('2023-11-01T10:00:00Z').toISOString(),
+            updatedAt: new Date('2024-05-10T11:00:00Z').toISOString(),
+        },
+        {
+            borrowerName: 'Priya Patel',
+            amount: 250000.00,
+            interestRate: 8.5,
+            startDate: '2023-01-15',
+            notes: 'Business expansion',
+            status: 'active',
+            createdAt: new Date('2023-01-15T12:00:00Z').toISOString(),
+            updatedAt: new Date('2024-05-10T12:00:00Z').toISOString(),
+        },
+        {
+            borrowerName: 'Arjun Singh',
+            amount: 50000.00,
+            interestRate: 10.0,
+            startDate: '2022-12-01',
+            notes: 'Medical emergency',
+            status: 'completed',
+            createdAt: new Date('2022-12-01T09:00:00Z').toISOString(),
+            updatedAt: new Date('2023-10-25T14:30:00Z').toISOString(),
+        },
+        {
+            borrowerName: 'Kavya Nair',
+            amount: 100000.00,
+            interestRate: 5.5,
+            startDate: '2023-08-20',
+            notes: 'Education fees',
+            status: 'active',
+            createdAt: new Date('2023-08-20T14:00:00Z').toISOString(),
+            updatedAt: new Date('2024-05-10T13:00:00Z').toISOString(),
+        },
+        {
+            borrowerName: 'Suresh Kumar',
+            amount: 300000.00,
+            interestRate: 12.3,
+            startDate: '2023-03-10',
+            notes: 'Wedding expenses',
+            status: 'overdue',
+            createdAt: new Date('2023-03-10T11:00:00Z').toISOString(),
+            updatedAt: new Date('2024-05-10T14:00:00Z').toISOString(),
+        },
+        {
+            borrowerName: 'Meera Gupta',
+            amount: 25000.00,
+            interestRate: 7.2,
+            startDate: '2024-01-05',
+            notes: 'Vehicle repair',
+            status: 'active',
+            createdAt: new Date('2024-01-05T10:30:00Z').toISOString(),
+            updatedAt: new Date('2024-05-10T15:00:00Z').toISOString(),
+        },
+        {
+            borrowerName: 'Vikram Reddy',
+            amount: 400000.00,
+            interestRate: 14.8,
+            startDate: '2022-09-01',
+            notes: null, // Null note for testing
+            status: 'active',
+            createdAt: new Date('2022-09-01T16:00:00Z').toISOString(),
+            updatedAt: new Date('2024-05-10T16:00:00Z').toISOString(),
+        },
+        {
+            borrowerName: 'Sneha Joshi',
+            amount: 150000.00,
+            interestRate: 8.5,
+            startDate: '2023-05-22',
+            notes: 'Travel expenses',
+            status: 'completed',
+            createdAt: new Date('2023-05-22T09:30:00Z').toISOString(),
+            updatedAt: new Date('2024-03-15T10:00:00Z').toISOString(),
+        },
+        {
+            borrowerName: 'Rohit Agarwal',
+            amount: 200000.00,
+            interestRate: 10.0,
+            startDate: '2023-02-14',
+            notes: 'Property down payment',
+            status: 'active',
+            createdAt: new Date('2023-02-14T13:00:00Z').toISOString(),
+            updatedAt: new Date('2024-05-10T17:00:00Z').toISOString(),
+        },
+        {
+            borrowerName: 'Pooja Verma',
+            amount: 500000.00,
+            interestRate: 9.0,
+            startDate: '2022-10-01',
+            notes: 'New business startup',
+            status: 'active',
+            createdAt: new Date('2022-10-01T10:00:00Z').toISOString(),
+            updatedAt: new Date('2024-05-10T18:00:00Z').toISOString(),
+        },
+        {
+            borrowerName: 'Sanjay Mehta',
+            amount: 50000.00,
+            interestRate: 12.3,
+            startDate: '2023-07-01',
+            notes: 'Emergency fund',
+            status: 'completed',
+            createdAt: new Date('2023-07-01T15:00:00Z').toISOString(),
+            updatedAt: new Date('2024-01-20T11:00:00Z').toISOString(),
+        },
+        {
+            borrowerName: 'Deepika Iyer',
+            amount: 10000.00,
+            interestRate: 5.5,
+            startDate: '2024-03-01',
+            notes: 'Gadget purchase',
+            status: 'active',
+            createdAt: new Date('2024-03-01T11:00:00Z').toISOString(),
+            updatedAt: new Date('2024-05-10T19:00:00Z').toISOString(),
+        },
+        {
+            borrowerName: 'Karan Malhotra',
+            amount: 200000.00,
+            interestRate: 14.8,
+            startDate: '2023-09-10',
+            notes: 'Real estate investment',
+            status: 'overdue',
+            createdAt: new Date('2023-09-10T12:00:00Z').toISOString(),
+            updatedAt: new Date('2024-05-10T20:00:00Z').toISOString(),
+        },
+        {
+            borrowerName: 'Anita Chopra',
+            amount: 25000.00,
+            interestRate: 7.2,
+            startDate: '2023-04-05',
+            notes: null, // Another null note
+            status: 'active',
+            createdAt: new Date('2023-04-05T09:00:00Z').toISOString(),
+            updatedAt: new Date('2024-05-10T21:00:00Z').toISOString(),
+        },
+        {
+            borrowerName: 'Rahul Desai',
+            amount: 150000.00,
+            interestRate: 8.5,
+            startDate: '2022-11-18',
+            notes: 'Higher education',
+            status: 'completed',
+            createdAt: new Date('2022-11-18T10:00:00Z').toISOString(),
+            updatedAt: new Date('2024-02-29T16:00:00Z').toISOString(),
+        },
+    ];
+
+    await db.insert(loans).values(sampleLoans);
+    
+    console.log('✅ Loans seeder completed successfully');
+}
+
+main().catch((error) => {
+    console.error('❌ Seeder failed:', error);
+});
