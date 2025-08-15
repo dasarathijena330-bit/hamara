@@ -51,14 +51,17 @@ export async function GET(request: NextRequest) {
       conditions.push(eq(loans.status, status));
     }
 
-    let query = db.select().from(loans);
+    // Start building the query
+    let query = db.select().from(loans)
+      .$dynamic(); // Use $dynamic() for conditional chaining
 
+    // Add sorting
+    // Apply where clause if conditions exist
     if (conditions.length > 0) {
       query = query.where(and(...conditions));
     }
 
-    // Add sorting
-    if (sort === 'amount' && (order === 'asc' || order === 'desc')) {
+    if ((sort === 'amount' || sort === 'startDate' || sort === 'createdAt') && (order === 'asc' || order === 'desc')) {
       query = order === 'asc' 
         ? query.orderBy(asc(loans.amount))
         : query.orderBy(desc(loans.amount));
@@ -72,7 +75,7 @@ export async function GET(request: NextRequest) {
         : query.orderBy(desc(loans.createdAt));
     }
 
-    const results = await query.limit(limit).offset(offset);
+    const results = await query.limit(limit).offset(offset).execute();
     return NextResponse.json(results);
 
   } catch (error) {
